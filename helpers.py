@@ -160,7 +160,6 @@ def muni_data():
 
 # Function to combine the two dataframes and adding additional calculated columns
 def combine_data():
-
     df = get_crime_data()
     df_muni = muni_data()
 
@@ -197,17 +196,42 @@ def combine_data():
     # Cars per capita in municipality
     df['car_per_capita'] = df['cars'] / df['population']
 
-
     # Dropping rows with missing values
     df = df.dropna(subset=['StatisticCrimeGroup'])
 
     return df
 
 
-# Function to normalize data to be used
-def normalize():
-    df = combine_data()
 
 
 
-    return df
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+# # Function to normalize data to be used
+# def normalize():
+#     df = combine_data()
+#
+#     norm_list = ['youth', 'population', 'wage','inequality', 'bagrut', 'cars',
+#                  'car_age', 'socio_econ', 'unemployment', 'car_per_capita']
+#     for var in norm_list:
+#         name = 'norm' + '_' + str(var)
+#         df[name] = MinMaxScaler.fit_transform(df[[var]])
+
