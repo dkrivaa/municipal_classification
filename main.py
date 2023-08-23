@@ -1,6 +1,11 @@
 import helpers
 
 
-# helpers.get_crime_data()
-# helpers.muni_data()
-helpers.combine_data()
+df = helpers.combine_data()
+
+print(df.columns)
+print(df.shape)
+print(len(df['StatisticCrimeGroup'].unique().tolist()))
+
+
+

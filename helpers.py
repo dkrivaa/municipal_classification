@@ -52,7 +52,6 @@ def get_crime_data():
     other_list = (df['StatisticCrimeGroup'].unique()[9:12])
     df['StatisticCrimeGroup'] = df['StatisticCrimeGroup'].apply(lambda x: 'אחר' if x in other_list else x)
 
-    print(df.shape)
     return df
 
 def muni_data():
@@ -159,6 +158,8 @@ def combine_data():
 
     df = get_crime_data()
     df_muni = muni_data()
+
+    # Adding columns with various characteristics for municipalities
     # making column with city code matching the CBS
     df['city_code'] = (df['Settlement_Council'].map(
         df_muni.set_index('Settlement_Council')['city_code'])).astype(str)
@@ -188,6 +189,11 @@ def combine_data():
     # Making dataframe with police city names and CBS city codes - for future use
     df_city_code = df[['city_code', 'Settlement_Council']]
 
+    # Cars per capita in municipality
+    df['car_per_capita'] = df['cars'] / df['population']
 
-    print(df.columns)
-    print(df.shape)
+
+    # Dropping rows with missing values
+    df = df.dropna(subset=['StatisticCrimeGroup'])
+
+    return df
