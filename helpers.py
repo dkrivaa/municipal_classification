@@ -197,10 +197,25 @@ def combine_data():
     df['car_per_capita'] = df['cars'] / df['population']
 
     # Dropping rows with missing values
+    df = df.dropna(subset=['Settlement_Council'])
     df = df.dropna(subset=['StatisticCrimeGroup'])
 
     return df
 
+def matrix_maker():
+    df = combine_data()
+
+    city_list = df['Settlement_Council'].unique().tolist()
+    quarter_list = df['Quarter'].unique().tolist()
+    for city in city_list[0:1]:
+        dfi = df.loc[df['Settlement_Council'] == city]
+        for quarter in quarter_list:
+            dfh = dfi.loc[dfi['Quarter'] == quarter]
+            dfx = dfh.groupby('StatisticCrimeGroup')['TikimSum'].sum()
+            matrix = dfx.values.reshape(-1,1)
+            print(matrix.shape)
+            print(matrix)
+            # print(city, quarter, dfx)
 
 
 
