@@ -2,8 +2,10 @@ import requests
 import pandas as pd
 import json
 import openpyxl as xl
+from sklearn.preprocessing import MinMaxScaler
 
 
+# Get crime data published by Israel Police
 def get_crime_data():
     # FIRST PART OF UPDATE
     # getting the count of records
@@ -54,6 +56,8 @@ def get_crime_data():
 
     return df
 
+
+# Getting municipal data from excel file
 def muni_data():
     # Read file into panda dataframe:
     workbook = xl.load_workbook('muni_2021.xlsx')
@@ -154,6 +158,7 @@ def muni_data():
     return df_muni
 
 
+# Function to combine the two dataframes and adding additional calculated columns
 def combine_data():
 
     df = get_crime_data()
@@ -195,5 +200,14 @@ def combine_data():
 
     # Dropping rows with missing values
     df = df.dropna(subset=['StatisticCrimeGroup'])
+
+    return df
+
+
+# Function to normalize data to be used
+def normalize():
+    df = combine_data()
+
+
 
     return df
