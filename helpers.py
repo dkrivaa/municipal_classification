@@ -208,7 +208,7 @@ def combine_data():
     df = df.dropna(subset=['Settlement_Council'])
     df = df.dropna(subset=['StatisticCrimeGroup'])
 
-    return df, df_city_code
+    return df
 
 
 def matrix_maker():
