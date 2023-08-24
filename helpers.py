@@ -54,6 +54,14 @@ def get_crime_data():
     other_list = (df['StatisticCrimeGroup'].unique()[9:12])
     df['StatisticCrimeGroup'] = df['StatisticCrimeGroup'].apply(lambda x: 'אחר' if x in other_list else x)
 
+    # Dropping rows with missing values
+    df = df.dropna(subset=['Settlement_Council'])
+
+    place_list = ['מקום אחר', 'מקום', 'ישוב פלסטיני']
+    df.drop(index=df[df['Settlement_Council'] == 'מקום אחר'].index, inplace=True)
+    df.drop(index=df[df['Settlement_Council'] == 'מקום'].index, inplace=True)
+    df.drop(index=df[df['Settlement_Council'] == 'ישוב פלסטיני'].index, inplace=True)
+
     return df
 
 
@@ -200,22 +208,32 @@ def combine_data():
     df = df.dropna(subset=['Settlement_Council'])
     df = df.dropna(subset=['StatisticCrimeGroup'])
 
-    return df
+    return df, df_city_code
+
 
 def matrix_maker():
     df = combine_data()
+    code_list = df['city_code'].unique().tolist()
+    if '5000' in code_list:
+        print('5000 is in the list')
+    print(code_list)
+    # for code in code_list:
+    #     dfx = df.loc[df['city_code'] == code]
+    #     print(code, dfx['Settlement_Council'])
 
-    city_list = df['Settlement_Council'].unique().tolist()
-    quarter_list = df['Quarter'].unique().tolist()
-    for city in city_list[0:1]:
-        dfi = df.loc[df['Settlement_Council'] == city]
-        for quarter in quarter_list:
-            dfh = dfi.loc[dfi['Quarter'] == quarter]
-            dfx = dfh.groupby('StatisticCrimeGroup')['TikimSum'].sum()
-            matrix = dfx.values.reshape(-1,1)
-            print(matrix.shape)
-            print(matrix)
-            # print(city, quarter, dfx)
+
+    # city_list = df['Settlement_Council'].unique().tolist()
+    # quarter_list = df['Quarter'].unique().tolist()
+    # crime_list = df['StatisticCrimeGroup'].unique().tolist()
+    # for city in city_list[0:1]:
+    #     dfi = df.loc[df['Settlement_Council'] == city]
+    #     for crime in crime_list:
+    #         dfh = dfi.loc[dfi['StatisticCrimeGroup'] == crime]
+    #         dfx = dfh.groupby('Quarter')['TikimSum'].sum()
+    #         # matrix = dfx.values.reshape(-1,1)
+    #         # print(matrix.shape)
+    #         # print(matrix)
+    #         print(crime, dfx)
 
 
 

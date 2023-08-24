@@ -1,15 +1,32 @@
 import helpers
 
-# df = helpers.combine_data()
-# print(df.columns)
-# print(df['StatisticCrimeGroup'].unique())
-#
-# # print('number of crimetypes: ', len(df['StatisticCrimeType'].unique()))
-# # print(df['StatisticCrimeType'].unique())
-#
-# print(len(df['Settlement_Council'].unique().tolist()))
+df = helpers.get_crime_data()
+df_muni = helpers.muni_data()
 
-helpers.matrix_maker()
+p_list = df['Settlement_Council'].unique().tolist()
+CBS_list = df_muni['Settlement_Council'].unique().tolist()
+
+problem1_list = []
+problem2_list = []
+for city in CBS_list:
+    if city in p_list:
+        pass
+    else:
+        problem1_list.append(city)
+
+for city in p_list:
+    if city in CBS_list:
+        pass
+    else:
+        if city in problem1_list:
+            pass
+        else:
+            problem2_list.append(city)
+
+print(problem1_list)
+print(problem2_list)
+
+
 
 
 
