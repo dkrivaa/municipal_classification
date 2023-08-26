@@ -2,6 +2,7 @@ import requests
 import pandas as pd
 import json
 import openpyxl as xl
+import numpy as np
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -213,27 +214,25 @@ def combine_data():
 
 def matrix_maker():
     df = combine_data()
-    code_list = df['city_code'].unique().tolist()
-    if '5000' in code_list:
-        print('5000 is in the list')
-    print(code_list)
-    # for code in code_list:
-    #     dfx = df.loc[df['city_code'] == code]
-    #     print(code, dfx['Settlement_Council'])
+
+    city_list = df['Settlement_Council'].unique().tolist()
+    crime_list = df['StatisticCrimeGroup'].unique().tolist()
+    quarter_list = df['Quarter'].unique().tolist()
+    matrixes_list = []
+    for city in city_list:
+        matrix_list = []
+        dfx = df.loc[df['Settlement_Council'] == city]
+        for crime in crime_list:
+            dfy = dfx.loc[df['StatisticCrimeGroup'] == crime]
+            series = dfy.groupby('Quarter')['TikimSum'].sum().reindex(quarter_list).fillna(0)
+            series = series.values.reshape(-1, 1)
+            matrix_list.append(series)
+        matrix = np.hstack(matrix_list)
+        matrixes_list.append(matrix)
+
+    print(len(matrixes_list))
 
 
-    # city_list = df['Settlement_Council'].unique().tolist()
-    # quarter_list = df['Quarter'].unique().tolist()
-    # crime_list = df['StatisticCrimeGroup'].unique().tolist()
-    # for city in city_list[0:1]:
-    #     dfi = df.loc[df['Settlement_Council'] == city]
-    #     for crime in crime_list:
-    #         dfh = dfi.loc[dfi['StatisticCrimeGroup'] == crime]
-    #         dfx = dfh.groupby('Quarter')['TikimSum'].sum()
-    #         # matrix = dfx.values.reshape(-1,1)
-    #         # print(matrix.shape)
-    #         # print(matrix)
-    #         print(crime, dfx)
 
 
 
