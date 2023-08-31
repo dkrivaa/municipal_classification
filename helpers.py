@@ -3,6 +3,12 @@ import pandas as pd
 import json
 import openpyxl as xl
 import numpy as np
+import tensorflow as tf
+from keras.models import Sequential
+from keras.layers import Dense, Activation
+from keras.optimizers import Adam
+from keras.metrics import MeanSquaredError, categorical_crossentropy
+
 from sklearn.preprocessing import MinMaxScaler
 
 
@@ -219,9 +225,11 @@ def matrix_maker():
     crime_list = df['StatisticCrimeGroup'].unique().tolist()
     quarter_list = df['Quarter'].unique().tolist()
     matrixes_list = []
+    y = []
     for city in city_list:
         matrix_list = []
         dfx = df.loc[df['Settlement_Council'] == city]
+        y.append(dfx['city_type'].unique())
         for crime in crime_list:
             dfy = dfx.loc[df['StatisticCrimeGroup'] == crime]
             series = dfy.groupby('Quarter')['TikimSum'].sum().reindex(quarter_list).fillna(0)
@@ -230,9 +238,29 @@ def matrix_maker():
         matrix = np.hstack(matrix_list)
         matrixes_list.append(matrix)
 
-    print(len(matrixes_list))
+    X = matrixes_list
+    X = np.array(X)
+    print(type(X), X.shape)
+    print(type(y))
+    print(y)
+
+    return X, y
 
 
+def model_func():
+    X, y = matrix_maker()
+
+    y_one_hot_labels = tf.keras.utils.to_categorical(y, num_classes=3)
+
+    model = tf.keras.models.Sequential()
+    model.add(Dense(64, input_shape=X.shape, activation='relu'))
+    model.add(Dense(32, 'relu'))
+    model.add(Dense(3, 'softmax'))
+
+    model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy',
+                  metrics=['accuracy'])
+
+    model.summary()
 
 
 

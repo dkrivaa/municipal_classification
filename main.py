@@ -1,7 +1,7 @@
 
 import helpers
 
-helpers.matrix_maker()
+helpers.model_func()
 
 
 
