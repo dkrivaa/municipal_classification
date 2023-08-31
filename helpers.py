@@ -250,7 +250,7 @@ def matrix_maker():
 def model_func():
     X, y = matrix_maker()
 
-    y_one_hot_labels = tf.keras.utils.to_categorical(y, num_classes=3)
+    # y_one_hot_labels = tf.keras.utils.to_categorical(y, num_classes=3)
 
     model = tf.keras.models.Sequential()
     model.add(Dense(64, input_shape=X.shape, activation='relu'))
