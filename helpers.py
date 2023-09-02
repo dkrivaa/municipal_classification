@@ -214,9 +214,58 @@ def combine_data():
     # Dropping rows with missing values
     df = df.dropna(subset=['Settlement_Council'])
     df = df.dropna(subset=['StatisticCrimeGroup'])
+    df = df.drop('_id', axis=1)
+
+    # Making new rows for quarters missing in certain municipalities
+    quarter_list = df['Quarter'].unique().tolist()
+
+    new_row_code = []
+    new_row_quarter = []
+    city_code_list = df['city_code'].unique().tolist()
+    for code in city_code_list:
+        df_temp = df.loc[df['city_code'] == code]
+        city_quarter_list = df_temp['Quarter'].unique().tolist()
+        if len(city_quarter_list) == len(quarter_list):
+            pass
+        else:
+            for i in range(0, len(quarter_list)):
+                if quarter_list[i] in city_quarter_list:
+                    pass
+                else:
+                    new_row_code.append(code)
+                    new_row_quarter.append(quarter_list[i])
+
+    new_rows = pd.DataFrame({'city_code': new_row_code, 'Quarter': new_row_quarter})
+    df = pd.concat([df, new_rows], ignore_index=True)
 
     return df
 
+
+# Make dataframe grouped by city_code and quarter
+def city_quarter_frame():
+    df = combine_data()
+
+    def first_non_empty(series):
+        return series.dropna().iloc[0] if not series.dropna().empty else np.nan
+
+    df_new = (df.groupby(['city_code', 'Quarter'])[['PoliceDistrict',
+                                                    'PoliceMerhav',
+                                                    'PoliceStation',
+                                                    'Settlement_Council',
+                                                    'population',
+                                                    'youth',
+                                                    'wage',
+                                                    'inequality',
+                                                    'bagrut',
+                                                    'cars',
+                                                    'car_age',
+                                                    'socio_econ',
+                                                    'unemployment',
+                                                    'car_per_capita',
+                                                    'city_type']]
+              .agg(first_non_empty).reset_index())
+
+    return df_new
 
 def matrix_maker():
     df = combine_data()
