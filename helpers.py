@@ -264,7 +264,7 @@ def city_quarter_frame():
                                                     'car_per_capita',
                                                     'city_type']]
               .agg(first_non_empty).reset_index())
-
+    df_csv = df_new.to_csv('df.csv')
     return df_new
 
 
