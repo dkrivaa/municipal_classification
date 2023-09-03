@@ -317,8 +317,6 @@ def city_quarter_frame():
 
     df_csv = df_new.to_csv('df.csv')
 
-    print(len(df_new['car_per_capita'].unique().tolist()))
-
     return df_new
 
 
