@@ -320,9 +320,6 @@ def city_quarter_frame():
     return df_new
 
 
-
-
-
 def matrix_maker():
     df = combine_data()
 
