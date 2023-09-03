@@ -241,35 +241,7 @@ def combine_data():
     return df
 
 
-# Make dataframe grouped by city_code and quarter
-# def city_quarter_frame():
-#     df = combine_data()
-#
-#     def first_non_empty(series):
-#         return series.dropna().iloc[0] if not series.dropna().empty else np.nan
-#
-#     df_new = (df.groupby(['city_code', 'Quarter'])['PoliceDistrict']
-#               .agg(first_non_empty).reset_index())
-#     df_csv = df_new.to_csv('df.csv')
-#     return df_new
-
-# [['PoliceDistrict',
-#                                                     'PoliceMerhav',
-#                                                     'PoliceStation',
-#                                                     'Settlement_Council',
-#                                                     'population',
-#                                                     'youth',
-#                                                     'wage',
-#                                                     'inequality',
-#                                                     'bagrut',
-#                                                     'cars',
-#                                                     'car_age',
-#                                                     'socio_econ',
-#                                                     'unemployment',
-#                                                     'car_per_capita',
-#                                                     # 'city_type']]
-
-def city_quarter_frame():
+def city_quarter_generic():
     df = combine_data()
 
     def first_non_empty(city):
@@ -320,33 +292,52 @@ def city_quarter_frame():
     return df_new
 
 
-def matrix_maker():
+def city_quarter_crime():
     df = combine_data()
-
-    city_list = df['Settlement_Council'].unique().tolist()
+    city_list = df['city_code'].unique().tolist()
     crime_list = df['StatisticCrimeGroup'].unique().tolist()
     quarter_list = df['Quarter'].unique().tolist()
-    matrixes_list = []
-    y = []
-    for city in city_list:
-        matrix_list = []
-        dfx = df.loc[df['Settlement_Council'] == city]
-        y.append(dfx['city_type'].unique())
-        for crime in crime_list:
-            dfy = dfx.loc[df['StatisticCrimeGroup'] == crime]
-            series = dfy.groupby('Quarter')['TikimSum'].sum().reindex(quarter_list).fillna(0)
-            series = series.values.reshape(-1, 1)
-            matrix_list.append(series)
-        matrix = np.hstack(matrix_list)
-        matrixes_list.append(matrix)
+    crime_list.pop(len(crime_list)-1)
 
-    X = matrixes_list
-    X = np.array(X)
-    print(type(X), X.shape)
-    print(type(y))
-    print(y)
+    for crime in crime_list:
+        df_temp = df.loc[df['StatisticCrimeGroup'] == crime]
+        series = df_temp.groupby(['city_code', 'Quarter'])['TikimSum'].sum().fillna(0)
+        print(crime)
+        print(len(series))
+        print(series)
+    return df
 
-    return X, y
+
+
+
+
+
+
+    # city_list = df['city_code'].unique().tolist()
+    # crime_list = df['StatisticCrimeGroup'].unique().tolist()
+    # quarter_list = df['Quarter'].unique().tolist()
+    # matrixes_list = []
+    # for city in city_list:
+    #     matrix_list = []
+    #     dfx = df.loc[df['Settlement_Council'] == city]
+    #     for crime in crime_list:
+    #         dfy = dfx.loc[df['StatisticCrimeGroup'] == crime]
+    #         series = dfy.groupby('Quarter')['TikimSum'].sum().reindex(quarter_list).fillna(0)
+    #         series = series.values.reshape(-1, 1)
+    #         matrix_list.append(series)
+    #     matrix = np.hstack(matrix_list)
+    #     matrixes_list.append(matrix)
+    #
+    # X = matrixes_list
+    # X = np.array(X)
+    # print(type(X), X.shape)
+    #
+    #
+    # return X, y
+
+
+
+
 
 
 def model_func():
