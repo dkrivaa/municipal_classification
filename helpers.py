@@ -242,30 +242,86 @@ def combine_data():
 
 
 # Make dataframe grouped by city_code and quarter
+# def city_quarter_frame():
+#     df = combine_data()
+#
+#     def first_non_empty(series):
+#         return series.dropna().iloc[0] if not series.dropna().empty else np.nan
+#
+#     df_new = (df.groupby(['city_code', 'Quarter'])['PoliceDistrict']
+#               .agg(first_non_empty).reset_index())
+#     df_csv = df_new.to_csv('df.csv')
+#     return df_new
+
+# [['PoliceDistrict',
+#                                                     'PoliceMerhav',
+#                                                     'PoliceStation',
+#                                                     'Settlement_Council',
+#                                                     'population',
+#                                                     'youth',
+#                                                     'wage',
+#                                                     'inequality',
+#                                                     'bagrut',
+#                                                     'cars',
+#                                                     'car_age',
+#                                                     'socio_econ',
+#                                                     'unemployment',
+#                                                     'car_per_capita',
+#                                                     # 'city_type']]
+
 def city_quarter_frame():
     df = combine_data()
 
-    def first_non_empty(series):
-        return series.dropna().iloc[0] if not series.dropna().empty else np.nan
+    def first_non_empty(city):
+        df_temp = df_new.loc[df_new['city_code'] == city]
+        special = df_temp.dropna().iloc[0] if not df_temp.dropna().empty else np.nan
+        return special
 
-    df_new = (df.groupby(['city_code', 'Quarter'])[['PoliceDistrict',
-                                                    'PoliceMerhav',
-                                                    'PoliceStation',
-                                                    'Settlement_Council',
-                                                    'population',
-                                                    'youth',
-                                                    'wage',
-                                                    'inequality',
-                                                    'bagrut',
-                                                    'cars',
-                                                    'car_age',
-                                                    'socio_econ',
-                                                    'unemployment',
-                                                    'car_per_capita',
-                                                    'city_type']]
-              .agg(first_non_empty).reset_index())
+    df_new = df.groupby(['city_code', 'Quarter']).agg({
+        'PoliceDistrict': 'first',
+        'PoliceMerhav': 'first',
+        'PoliceStation': 'first',
+        'Settlement_Council': 'first',
+        'population': 'first',
+        'youth': 'first',
+        'wage': 'first',
+        'inequality': 'first',
+        'bagrut': 'first',
+        'cars': 'first',
+        'car_age': 'first',
+        'socio_econ': 'first',
+        'unemployment': 'first',
+        'car_per_capita': 'first',
+        'city_type': 'first'
+    }).reset_index()
+
+    city_list = df_new['city_code'].unique().tolist()
+    for city in city_list:
+        special = first_non_empty(city)
+
+        df_new.loc[(df_new['PoliceDistrict'].isnull()) & (df_new['city_code'] == city), 'PoliceDistrict'] = special[2]
+        df_new.loc[(df_new['PoliceMerhav'].isnull()) & (df_new['city_code'] == city), 'PoliceMerhav'] = special[3]
+        df_new.loc[(df_new['PoliceStation'].isnull()) & (df_new['city_code'] == city), 'PoliceStation'] = special[4]
+        df_new.loc[(df_new['Settlement_Council'].isnull()) & (df_new['city_code'] == city), 'Settlement_Council'] = special[5]
+        df_new.loc[(df_new['population'].isnull()) & (df_new['city_code'] == city), 'population'] = special[6]
+        df_new.loc[(df_new['youth'].isnull()) & (df_new['city_code'] == city), 'youth'] = special[7]
+        df_new.loc[(df_new['wage'].isnull()) & (df_new['city_code'] == city), 'wage'] = special[8]
+        df_new.loc[(df_new['inequality'].isnull()) & (df_new['city_code'] == city), 'inequality'] = special[9]
+        df_new.loc[(df_new['bagrut'].isnull()) & (df_new['city_code'] == city), 'bagrut'] = special[10]
+        df_new.loc[(df_new['cars'].isnull()) & (df_new['city_code'] == city), 'cars'] = special[11]
+        df_new.loc[(df_new['car_age'].isnull()) & (df_new['city_code'] == city), 'car_age'] = special[12]
+        df_new.loc[(df_new['socio_econ'].isnull()) & (df_new['city_code'] == city), 'socio_econ'] = special[13]
+        df_new.loc[(df_new['unemployment'].isnull()) & (df_new['city_code'] == city), 'unemployment'] = special[14]
+        df_new.loc[(df_new['car_per_capita'].isnull()) & (df_new['city_code'] == city), 'car_per_capita'] = special[15]
+        df_new.loc[(df_new['city_type'].isnull()) & (df_new['city_code'] == city), 'city_type'] = special[16]
+
     df_csv = df_new.to_csv('df.csv')
+
+    print(len(df_new['car_per_capita'].unique().tolist()))
+
     return df_new
+
+
 
 
 
