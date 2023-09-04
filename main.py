@@ -3,7 +3,13 @@ import pandas as pd
 
 import helpers
 
-df = helpers.final_frame()
+df = helpers.model_frame()
+
+print(df.shape)
+print(df.columns)
+print(df.head(25))
+
+
 
 
 

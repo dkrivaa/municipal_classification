@@ -363,12 +363,7 @@ def final_frame():
     df_generic = city_quarter_generic()
     df_crime = city_quarter_crime()
 
-    print(df_generic.shape)
-    print(df_crime.shape)
-
     df_final = pd.merge(df_generic, df_crime, on=['city_code', 'Quarter'], how='inner')
-
-    print(df_final.columns)
 
     # per-capita crimes:
     df_final['econ_per_capita'] = df_final['econ_crime'] / df_final['population']
@@ -383,9 +378,48 @@ def final_frame():
     df_final['license_per_capita'] = df_final['license_crime'] / df_final['population']
     df_final['person_per_capita'] = df_final['person_crime'] / df_final['population']
     df_final['security_per_capita'] = df_final['security_crime'] / df_final['population']
-    df_final['administrative__per_capita'] = df_final['administrative_crime'] / df_final['population']
+    df_final['administrative_per_capita'] = df_final['administrative_crime'] / df_final['population']
 
     return df_final
+
+
+def normalize():
+
+    df = final_frame()
+
+    # Define a function to normalize columns using Min-Max scaling
+    def normalize_column(column):
+        min_val = column.min()
+        max_val = column.max()
+        normalized_column = (column - min_val) / (max_val - min_val)
+        return normalized_column
+
+    # Normalize specific columns
+    columns_to_normalize = df.columns[6:].tolist()
+    df[columns_to_normalize] = df[columns_to_normalize].apply(normalize_column)
+
+    return df
+
+
+def model_frame():
+    df = normalize()
+
+    # Drop unnecessary columns from dataframe
+    columns_to_drop = ['city_code', 'Quarter', 'PoliceDistrict', 'PoliceMerhav',
+                       'PoliceStation', 'Settlement_Council',
+                       'econ_crime', 'vice_crime', 'property_crime', 'sex_crime',
+                       'fraud_crime', 'body_crime', 'public_order_crime', 'traffic_crime',
+                       'other_crime', 'license_crime', 'person_crime', 'security_crime',
+                       'administrative_crime']
+
+    df = df.drop(columns=columns_to_drop)
+
+    # # Move city_type to be last column
+    # df = df.drop('city_type')
+    # df['city_type'] = df.pop('city_type')
+
+    return df
+
 
 
 
