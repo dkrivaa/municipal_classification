@@ -300,17 +300,62 @@ def city_quarter_crime():
     quarter_list = df['Quarter'].unique().tolist()
     crime_list.pop(len(crime_list)-1)
 
-    for city in city_list:
-        for crime in crime_list:
+    city_code_list = []
+    quarter_code_list = []
+    crime_code_list = []
+    crime_data_list = []
+
+    for crime in crime_list:
+        for city in city_list:
             df_temp = df.loc[(df['city_code'] == city) & (df['StatisticCrimeGroup'] == crime)]
             series = df_temp.groupby(['Quarter'])['TikimSum'].sum().reindex(quarter_list).fillna(0)
-            print(city)
-            print(crime)
-            print(len(series))
-            print(type(series))
+            city_code_list.append(city)
+            quarter_code_list.append(series.index)
+            crime_code_list.append(crime)
+            crime_data_list.append(series)
 
+    # Flattening quarter and crime lists:
+    flat_quarter = [item for sublist in quarter_code_list for item in sublist]
+    flat_crime = [item for sublist in crime_data_list for item in sublist]
 
-    return df
+    # Organizing city_code_list
+    temp_city_code = city_code_list[0:251]
+    flat_city_code = [item for item in temp_city_code for _ in range(21)]
+
+    df_crime = pd.DataFrame({'city_code': flat_city_code[0:5271],
+                             'Quarter': flat_quarter[0:5271],
+                             crime_code_list[0]: flat_crime[0:5271],
+                             crime_code_list[251]: flat_crime[5271:10542],
+                             crime_code_list[502]: flat_crime[10542:15813],
+                             crime_code_list[753]: flat_crime[15813:21084],
+                             crime_code_list[1004]: flat_crime[21084:26355],
+                             crime_code_list[1255]: flat_crime[26355:31626],
+                             crime_code_list[1506]: flat_crime[31626:36897],
+                             crime_code_list[1757]: flat_crime[36897:42168],
+                             crime_code_list[2008]: flat_crime[42168:47439],
+                             crime_code_list[2259]: flat_crime[47439:52710],
+                             crime_code_list[2510]: flat_crime[52710:57981],
+                             crime_code_list[2761]: flat_crime[57981:63252],
+                             crime_code_list[3012]: flat_crime[63252:],
+                             })
+
+    return df_crime
+
+# Combining the generic and crime dataframes (according to city and quarter)
+def final_frame():
+    df_generic = city_quarter_generic()
+    df_crime = city_quarter_crime()
+
+    print(df_generic.shape)
+    print(df_crime.shape)
+
+    # df_final = pd.merge(df_generic, df_crime, on=['city_code', 'Quarter'], how='inner')
+    #
+    # print(len(df_final))
+    # print(df_final.columns)
+
+    # return df_final
+
 
 
 
