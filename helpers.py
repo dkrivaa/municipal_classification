@@ -294,17 +294,22 @@ def city_quarter_generic():
 
 def city_quarter_crime():
     df = combine_data()
+
     city_list = df['city_code'].unique().tolist()
     crime_list = df['StatisticCrimeGroup'].unique().tolist()
     quarter_list = df['Quarter'].unique().tolist()
     crime_list.pop(len(crime_list)-1)
 
-    for crime in crime_list:
-        df_temp = df.loc[df['StatisticCrimeGroup'] == crime]
-        series = df_temp.groupby(['city_code', 'Quarter'])['TikimSum'].sum().fillna(0)
-        print(crime)
-        print(len(series))
-        print(series)
+    for city in city_list:
+        for crime in crime_list:
+            df_temp = df.loc[(df['city_code'] == city) & (df['StatisticCrimeGroup'] == crime)]
+            series = df_temp.groupby(['Quarter'])['TikimSum'].sum().reindex(quarter_list).fillna(0)
+            print(city)
+            print(crime)
+            print(len(series))
+            print(type(series))
+
+
     return df
 
 
