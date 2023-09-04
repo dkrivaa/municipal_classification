@@ -349,12 +349,9 @@ def final_frame():
     print(df_generic.shape)
     print(df_crime.shape)
 
-    # df_final = pd.merge(df_generic, df_crime, on=['city_code', 'Quarter'], how='inner')
-    #
-    # print(len(df_final))
-    # print(df_final.columns)
+    df_final = pd.merge(df_generic, df_crime, on=['city_code', 'Quarter'], how='inner')
 
-    # return df_final
+    return df_final
 
 
 
