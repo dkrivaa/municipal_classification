@@ -324,20 +324,37 @@ def city_quarter_crime():
 
     df_crime = pd.DataFrame({'city_code': flat_city_code[0:5271],
                              'Quarter': flat_quarter[0:5271],
-                             crime_code_list[0]: flat_crime[0:5271],
-                             crime_code_list[251]: flat_crime[5271:10542],
-                             crime_code_list[502]: flat_crime[10542:15813],
-                             crime_code_list[753]: flat_crime[15813:21084],
-                             crime_code_list[1004]: flat_crime[21084:26355],
-                             crime_code_list[1255]: flat_crime[26355:31626],
-                             crime_code_list[1506]: flat_crime[31626:36897],
-                             crime_code_list[1757]: flat_crime[36897:42168],
-                             crime_code_list[2008]: flat_crime[42168:47439],
-                             crime_code_list[2259]: flat_crime[47439:52710],
-                             crime_code_list[2510]: flat_crime[52710:57981],
-                             crime_code_list[2761]: flat_crime[57981:63252],
-                             crime_code_list[3012]: flat_crime[63252:],
+                             'econ_crime': flat_crime[0:5271],
+                             'vice_crime': flat_crime[5271:10542],
+                             'property_crime': flat_crime[10542:15813],
+                             'sex_crime': flat_crime[15813:21084],
+                             'fraud_crime': flat_crime[21084:26355],
+                             'body_crime': flat_crime[26355:31626],
+                             'public_order_crime': flat_crime[31626:36897],
+                             'traffic_crime': flat_crime[36897:42168],
+                             'other_crime': flat_crime[42168:47439],
+                             'license_crime': flat_crime[47439:52710],
+                             'person_crime': flat_crime[52710:57981],
+                             'security_crime': flat_crime[57981:63252],
+                             'administrative_crime': flat_crime[63252:],
                              })
+
+    # uncomment to get the hebrew titles of crime groups
+
+    # print(crime_code_list[0])
+    # print(crime_code_list[251])
+    # print(crime_code_list[502])
+    # print(crime_code_list[753])
+    # print(crime_code_list[1004])
+    # print(crime_code_list[1255])
+    # print(crime_code_list[1506])
+    # print(crime_code_list[1757])
+    # print(crime_code_list[2008])
+    # print(crime_code_list[2259])
+    # print(crime_code_list[2510])
+    # print(crime_code_list[2761])
+    # print(crime_code_list[3012])
+
 
     return df_crime
 
@@ -350,6 +367,23 @@ def final_frame():
     print(df_crime.shape)
 
     df_final = pd.merge(df_generic, df_crime, on=['city_code', 'Quarter'], how='inner')
+
+    print(df_final.columns)
+
+    # per-capita crimes:
+    df_final['econ_per_capita'] = df_final['econ_crime'] / df_final['population']
+    df_final['vice_per_capita'] = df_final['vice_crime'] / df_final['population']
+    df_final['property_per_capita'] = df_final['property_crime'] / df_final['population']
+    df_final['sex_per_capita'] = df_final['sex_crime'] / df_final['population']
+    df_final['fraud_per_capita'] = df_final['fraud_crime'] / df_final['population']
+    df_final['body_per_capita'] = df_final['body_crime'] / df_final['population']
+    df_final['public_order_per_capita'] = df_final['public_order_crime'] / df_final['population']
+    df_final['traffic_per_capita'] = df_final['traffic_crime'] / df_final['population']
+    df_final['other_per_capita'] = df_final['other_crime'] / df_final['population']
+    df_final['license_per_capita'] = df_final['license_crime'] / df_final['population']
+    df_final['person_per_capita'] = df_final['person_crime'] / df_final['population']
+    df_final['security_per_capita'] = df_final['security_crime'] / df_final['population']
+    df_final['administrative__per_capita'] = df_final['administrative_crime'] / df_final['population']
 
     return df_final
 
