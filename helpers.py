@@ -422,8 +422,6 @@ def model_frame():
     df = df.drop(columns='city_type')
     # df['city_type'] = df.pop('city_type')
 
-    print(df.columns)
-
     # Grouping the data back into matrixes for each city
     rows_per_matrix = 21
     columns_per_matrix = 13
@@ -440,8 +438,8 @@ def model_frame():
         small_matrix = df['last_city_type'].iloc[start]
         type_list.append(small_matrix)
 
-    print(city_matrix)
-    print(type_list)
+    print(len(city_matrix))
+    print(len(type_list))
 
     df_final = pd.DataFrame({'data': city_matrix, 'type': type_list})
     df_final.to_csv('df_final.csv')
