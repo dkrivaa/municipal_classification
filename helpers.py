@@ -396,6 +396,7 @@ def normalize():
 
     # Normalize specific columns
     columns_to_normalize = df.columns[6:].tolist()
+    columns_to_normalize.pop(10)
     df[columns_to_normalize] = df[columns_to_normalize].apply(normalize_column)
 
     return df
@@ -404,19 +405,24 @@ def normalize():
 def model_frame():
     df = normalize()
 
-    # Drop unnecessary columns from dataframe
+    # Drop unnecessary columns from dataframe - leaving only crimes per capita
     columns_to_drop = ['city_code', 'Quarter', 'PoliceDistrict', 'PoliceMerhav',
                        'PoliceStation', 'Settlement_Council',
                        'econ_crime', 'vice_crime', 'property_crime', 'sex_crime',
                        'fraud_crime', 'body_crime', 'public_order_crime', 'traffic_crime',
                        'other_crime', 'license_crime', 'person_crime', 'security_crime',
-                       'administrative_crime']
+                       'administrative_crime', 'population', 'youth', 'wage', 'inequality',
+                       'bagrut', 'cars', 'car_age', 'socio_econ', 'unemployment',
+                       'car_per_capita']
 
     df = df.drop(columns=columns_to_drop)
 
-    # # Move city_type to be last column
-    # df = df.drop('city_type')
+    # Move city_type to be last column
+    df['last_city_type'] = df['city_type']
+    df = df.drop(columns='city_type')
     # df['city_type'] = df.pop('city_type')
+
+
 
     return df
 
@@ -456,18 +462,31 @@ def model_frame():
 
 
 def model_func():
-    X, y = matrix_maker()
+    # Define the model
+    model = models.Sequential()
 
-    # y_one_hot_labels = tf.keras.utils.to_categorical(y, num_classes=3)
+    # Convolutional layers
+    model.add(layers.Conv2D(32, (3, 3), activation='relu', input_shape=(21, 13, 1)))
+    model.add(layers.MaxPooling2D((2, 2)))
 
-    model = tf.keras.models.Sequential()
-    model.add(Dense(64, input_shape=X.shape, activation='relu'))
-    model.add(Dense(32, 'relu'))
-    model.add(Dense(3, 'softmax'))
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+    model.add(layers.MaxPooling2D((2, 2)))
 
-    model.compile(optimizer=Adam(learning_rate=0.001), loss='categorical_crossentropy',
+    model.add(layers.Conv2D(64, (3, 3), activation='relu'))
+
+    # Flatten layer
+    model.add(layers.Flatten())
+
+    # Dense layers
+    model.add(layers.Dense(64, activation='relu'))
+    model.add(layers.Dense(3, activation='softmax'))  # Three output classes
+
+    # Compile the model
+    model.compile(optimizer='adam',
+                  loss='categorical_crossentropy',
                   metrics=['accuracy'])
 
+    # Display the model summary
     model.summary()
 
 
