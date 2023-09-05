@@ -5,9 +5,9 @@ import helpers
 
 df = helpers.model_frame()
 
-print(df.shape)
-print(df.columns)
-print(df.head(25))
+# print(df.shape)
+# print(df.columns)
+# print(df.head(25))
 
 
 

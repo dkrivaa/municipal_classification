@@ -422,7 +422,29 @@ def model_frame():
     df = df.drop(columns='city_type')
     # df['city_type'] = df.pop('city_type')
 
+    print(df.columns)
 
+    # Grouping the data back into matrixes for each city
+    rows_per_matrix = 21
+    columns_per_matrix = 13
+    city_matrix = []
+    type_list = []
+    for start_row in range(0, len(df), rows_per_matrix):
+        end_row = start_row + rows_per_matrix
+        for start_col in range(0, len(df.columns)-1, columns_per_matrix):
+            end_col = start_col + columns_per_matrix
+            small_matrix = df.iloc[start_row:end_row, start_col:end_col]
+            city_matrix.append(small_matrix)
+
+    for start in range(0, len(df), rows_per_matrix):
+        small_matrix = df['last_city_type'].iloc[start]
+        type_list.append(small_matrix)
+
+    print(city_matrix)
+    print(type_list)
+
+    df_final = pd.DataFrame({'data': city_matrix, 'type': type_list})
+    df_final.to_csv('df_final.csv')
 
     return df
 
